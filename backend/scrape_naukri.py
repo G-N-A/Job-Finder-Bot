@@ -25,6 +25,12 @@ async def scrape_naukri(keywords, location):
         except:
             pass
 
+        # Remove popup via JS as a fallback
+        await page.evaluate('''() => {
+            const popup = document.querySelector('div[role="dialog"]');
+            if (popup) popup.remove();
+        }''')
+
         jobs = await page.query_selector_all('div.cust-job-tuple')
         logging.info(f"Found {len(jobs)} jobs")
         results = []
