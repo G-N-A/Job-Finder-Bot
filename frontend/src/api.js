@@ -10,8 +10,7 @@ export async function fetchJobs(params) {
   } catch (e) {
     throw new Error('Invalid response from server');
   }
-  // If the response is an object with a 'results' key, use that; otherwise, use the array directly
   if (Array.isArray(data)) return data;
   if (data && Array.isArray(data.results)) return data.results;
   return [];
-} 
+}

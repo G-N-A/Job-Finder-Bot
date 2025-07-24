@@ -8,7 +8,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedJob, setSelectedJob] = useState(null);
-  const [darkMode, setDarkMode] = useState(true);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -17,7 +16,6 @@ function App() {
     setSelectedJob(null);
     try {
       const data = await fetchJobs({ keywords, location });
-      console.log('Fetched jobs:', data); // <-- Add this line
       setJobs(data || []);
     } catch (err) {
       setError(err.message);
@@ -31,86 +29,75 @@ function App() {
   };
 
   return (
-    <div className={
-      `${darkMode ? 'bg-black' : 'bg-white'} min-h-screen py-8 px-2 md:px-0 transition-colors duration-300 font-sans`
-    }>
-      <div className={`max-w-6xl mx-auto rounded-lg shadow-lg p-6 ${darkMode ? 'bg-dark text-white' : 'bg-white text-black'}`}>
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-extrabold text-primary mb-0 font-sans tracking-tight">Job Finder</h1>
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className={`px-4 py-2 rounded font-semibold border transition-colors duration-200 ${darkMode ? 'bg-white text-black border-gray-300 hover:bg-primary hover:text-white' : 'bg-black text-white border-gray-800 hover:bg-primary hover:text-white'}`}
-            aria-label="Toggle dark mode"
-          >
-            {darkMode ? 'Light Mode' : 'Dark Mode'}
-          </button>
+    <div className="min-h-screen w-full bg-gradient-to-br from-black via-blue-900 to-blue-950 py-10 px-2 md:px-0 font-sans transition-colors duration-300">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10 gap-4">
+          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-blue-400 via-blue-600 to-blue-900 bg-clip-text text-transparent tracking-tight drop-shadow-lg">Job Finder</h1>
+          <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 w-full md:w-auto justify-center">
+            <input
+              type="text"
+              placeholder="Keywords (e.g. Data Analyst)"
+              value={keywords}
+              onChange={e => setKeywords(e.target.value)}
+              className="border border-blue-800 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-64 font-sans bg-black/80 text-white placeholder-blue-300 shadow"
+            />
+            <input
+              type="text"
+              placeholder="Location (e.g. Mumbai)"
+              value={location}
+              onChange={e => setLocation(e.target.value)}
+              className="border border-blue-800 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-64 font-sans bg-black/80 text-white placeholder-blue-300 shadow"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-gradient-to-r from-blue-700 to-blue-900 text-white px-8 py-2 rounded-lg font-bold hover:from-blue-600 hover:to-blue-800 transition disabled:opacity-50 font-sans shadow"
+            >
+              {loading ? 'Searching...' : 'Search'}
+            </button>
+          </form>
         </div>
-        <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 mb-8 justify-center">
-          <input
-            type="text"
-            placeholder="Keywords (e.g. Data Analyst)"
-            value={keywords}
-            onChange={e => setKeywords(e.target.value)}
-            className={`border rounded px-4 py-2 focus:outline-none focus:ring-2 w-full md:w-1/3 font-sans ${darkMode ? 'bg-black text-white border-gray-700 focus:ring-primary' : 'bg-white text-black border-gray-300 focus:ring-primary'}`}
-          />
-          <input
-            type="text"
-            placeholder="Location (e.g. Mumbai)"
-            value={location}
-            onChange={e => setLocation(e.target.value)}
-            className={`border rounded px-4 py-2 focus:outline-none focus:ring-2 w-full md:w-1/3 font-sans ${darkMode ? 'bg-black text-white border-gray-700 focus:ring-primary' : 'bg-white text-black border-gray-300 focus:ring-primary'}`}
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-primary text-white px-6 py-2 rounded font-semibold hover:bg-primary-dark transition disabled:opacity-50 font-sans"
-          >
-            {loading ? 'Searching...' : 'Search'}
-          </button>
-        </form>
-        {error && <div className="text-primary mb-4 text-center">{error}</div>}
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className={`md:w-1/2 rounded-lg p-4 ${darkMode ? 'bg-zinc-900 border border-zinc-800' : 'bg-gray-100 border border-gray-200'}`}>
-            <h2 className="text-2xl font-bold mb-4 font-sans tracking-tight">Jobs</h2>
+        {error && <div className="text-red-400 mb-4 text-center font-semibold">{error}</div>}
+        <div className="flex flex-col md:flex-row gap-10">
+          <div className="md:w-1/2 rounded-2xl p-6 bg-black/60 backdrop-blur-md border border-blue-900 shadow-xl">
+            <h2 className="text-2xl font-bold mb-6 font-sans tracking-tight text-blue-200">Jobs</h2>
             <ul className="space-y-4">
               {jobs.map((job, idx) => (
                 <li key={job.link || idx}>
                   <button
                     onClick={() => handleJobClick(job)}
-                    className={`w-full text-left p-5 rounded-lg border transition shadow-sm hover:shadow-md focus:outline-none focus:ring-2 font-sans ${selectedJob === job
-                      ? 'bg-primary/10 border-primary text-primary'
-                      : darkMode
-                        ? 'bg-zinc-900 border-zinc-700 text-white hover:border-primary'
-                        : 'bg-white border-gray-200 text-black hover:border-primary'}`}
+                    className={`w-full text-left p-5 rounded-xl border transition shadow-md hover:shadow-xl focus:outline-none focus:ring-2 font-sans ${selectedJob === job
+                      ? 'bg-gradient-to-r from-blue-800 to-blue-900 border-blue-400 text-blue-100'
+                      : 'bg-black/70 border-blue-900 text-white hover:border-blue-400'}`}
                   >
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                      <span className="text-lg font-bold text-primary truncate">{job.title}</span>
-                      <span className="text-sm font-medium text-gray-500">{job.location}</span>
+                      <span className="text-lg font-bold text-blue-300 truncate">{job.title}</span>
+                      <span className="text-sm font-medium text-blue-400">{job.location}</span>
                     </div>
-                    <div className="text-base font-semibold mt-1">{job.company}</div>
-                    {job.description && <div className="text-sm text-gray-400 mt-2 line-clamp-2">{job.description}</div>}
+                    <div className="text-base font-semibold mt-1 text-blue-200">{job.company}</div>
+                    {job.description && <div className="text-sm text-blue-300 mt-2 line-clamp-2">{job.description}</div>}
                   </button>
                 </li>
               ))}
               {jobs.length === 0 && !loading && (
-                <li className="text-gray-400">No jobs found. Try searching above.</li>
+                <li className="text-blue-400">No jobs found. Try searching above.</li>
               )}
             </ul>
           </div>
           <div className="md:w-1/2">
             {selectedJob && (
-              <div className={`rounded-lg p-8 border shadow font-sans ${darkMode ? 'bg-black border-zinc-800 text-white' : 'bg-white border-gray-200 text-black'}`}>
-                <h2 className="text-2xl font-bold text-primary mb-2 font-sans">{selectedJob.title}</h2>
+              <div className="rounded-2xl p-8 border border-blue-900 shadow-xl bg-black/70 backdrop-blur-md font-sans">
+                <h2 className="text-2xl font-bold text-blue-200 mb-2 font-sans">{selectedJob.title}</h2>
                 <div className="mb-2">
-                  <span className="font-semibold text-primary">Company:</span> {selectedJob.company}
+                  <span className="font-semibold text-blue-400">Company:</span> {selectedJob.company}
                 </div>
                 <div className="mb-2">
-                  <span className="font-semibold text-primary">Location:</span> {selectedJob.location}
+                  <span className="font-semibold text-blue-400">Location:</span> {selectedJob.location}
                 </div>
                 {selectedJob.description && (
                   <div className="mb-4">
-                    <span className="font-semibold text-primary">Description:</span>
-                    <div className="prose prose-sm max-w-none mt-1 text-gray-200 dark:text-gray-300 font-sans">
+                    <span className="font-semibold text-blue-400">Description:</span>
+                    <div className="prose prose-sm max-w-none mt-1 text-blue-100 font-sans">
                       {selectedJob.description}
                     </div>
                   </div>
@@ -119,14 +106,14 @@ function App() {
                   href={selectedJob.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block mt-2 bg-primary text-white px-6 py-2 rounded hover:bg-primary-dark transition font-sans font-semibold text-lg"
+                  className="inline-block mt-2 bg-gradient-to-r from-blue-700 to-blue-900 text-white px-8 py-2 rounded-lg hover:from-blue-600 hover:to-blue-800 transition font-sans font-bold text-lg shadow"
                 >
                   View & Apply on Naukri.com
                 </a>
               </div>
             )}
             {!selectedJob && (
-              <div className="text-gray-400 text-center mt-10 font-sans">Select a job to see details.</div>
+              <div className="text-blue-400 text-center mt-10 font-sans">Select a job to see details.</div>
             )}
           </div>
         </div>

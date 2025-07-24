@@ -2,6 +2,10 @@ import sys
 import asyncio
 from playwright.async_api import async_playwright
 import json
+import logging
+
+# Redirect log output to stderr
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 
 async def scrape_naukri(keywords, location):
     url = f"https://www.naukri.com/{keywords.replace(' ', '-')}-jobs-in-{location.replace(' ', '-')}"
@@ -17,12 +21,12 @@ async def scrape_naukri(keywords, location):
             await page.mouse.wheel(0, 2000)
             await page.wait_for_timeout(1000)
         try:
-            await page.click('button[aria-label=\"Close\"]', timeout=3000)
+            await page.click('button[aria-label="Close"]', timeout=3000)
         except:
             pass
 
         jobs = await page.query_selector_all('div.cust-job-tuple')
-        print(f"Found {len(jobs)} jobs")
+        logging.info(f"Found {len(jobs)} jobs")
         results = []
         for job in jobs[:20]:
             title_el = await job.query_selector('a.title')
@@ -47,4 +51,4 @@ async def scrape_naukri(keywords, location):
 if __name__ == '__main__':
     keywords = sys.argv[1] if len(sys.argv) > 1 else 'data-analyst'
     location = sys.argv[2] if len(sys.argv) > 2 else 'india'
-    asyncio.run(scrape_naukri(keywords, location)) 
+    asyncio.run(scrape_naukri(keywords, location))
